@@ -92,6 +92,23 @@ function App() {
 }
 ```
 
+### Inline Wrapper Example (No Forced Centering)
+
+Use `disableAutoCenter` when wrapping inline or flow-based UI elements.  
+This disables the internal `top/left: 50%` + `translate(-50%, -50%)` positioning.
+
+```tsx
+<LiquidGlass
+  disableAutoCenter
+  elasticity={0.3}
+  style={{ position: 'relative' }}
+>
+  <form className="rounded-full px-5 py-3">
+    <input placeholder="Ask a question..." />
+  </form>
+</LiquidGlass>
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -109,6 +126,7 @@ function App() {
 | `overLight` | `boolean` | `false` | Whether the glass is over a light background |
 | `onClick` | `() => void` | - | Click handler |
 | `mouseContainer` | `React.RefObject<HTMLElement \| null> \| null` | `null` | Container element to track mouse movement on (defaults to the glass component itself) |
+| `disableAutoCenter` | `boolean` | `false` | Disables the internal auto-centering transform and `top/left: 50%` positioning for inline/layout-controlled usage |
 | `mode` | `"standard" \| "polar" \| "prominent" \| "shader"` | `"standard"` | Refraction mode for different visual effects. `shader` is the most accurate but not the most stable. |
 | `globalMousePos` | `{ x: number; y: number }` | - | Global mouse position coordinates for manual control |
 | `mouseOffset` | `{ x: number; y: number }` | - | Mouse position offset for fine-tuning positioning |

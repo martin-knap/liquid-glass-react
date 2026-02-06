@@ -257,6 +257,7 @@ interface LiquidGlassProps {
   globalMousePos?: { x: number; y: number }
   mouseOffset?: { x: number; y: number }
   mouseContainer?: React.RefObject<HTMLElement | null> | null
+  disableAutoCenter?: boolean
   className?: string
   padding?: string
   style?: React.CSSProperties
@@ -276,6 +277,7 @@ export default function LiquidGlass({
   globalMousePos: externalGlobalMousePos,
   mouseOffset: externalMouseOffset,
   mouseContainer = null,
+  disableAutoCenter = false,
   className = "",
   padding = "24px 32px",
   overLight = false,
@@ -441,7 +443,12 @@ export default function LiquidGlass({
     return () => window.removeEventListener("resize", updateGlassSize)
   }, [])
 
-  const transformStyle = `translate(calc(-50% + ${calculateElasticTranslation().x}px), calc(-50% + ${calculateElasticTranslation().y}px)) ${isActive && Boolean(onClick) ? "scale(0.96)" : calculateDirectionalScale()}`
+  const elasticTranslation = calculateElasticTranslation()
+  const baseTranslate = disableAutoCenter
+    ? `translate(${elasticTranslation.x}px, ${elasticTranslation.y}px)`
+    : `translate(calc(-50% + ${elasticTranslation.x}px), calc(-50% + ${elasticTranslation.y}px))`
+
+  const transformStyle = `${baseTranslate} ${isActive && Boolean(onClick) ? "scale(0.96)" : calculateDirectionalScale()}`
 
   const baseStyle = {
     ...style,
@@ -451,8 +458,8 @@ export default function LiquidGlass({
 
   const positionStyles = {
     position: baseStyle.position || "relative",
-    top: baseStyle.top || "50%",
-    left: baseStyle.left || "50%",
+    top: disableAutoCenter ? baseStyle.top : (baseStyle.top || "50%"),
+    left: disableAutoCenter ? baseStyle.left : (baseStyle.left || "50%"),
   }
 
   return (
