@@ -191,6 +191,7 @@ const GlassContainer = forwardRef<
       filter: isFirefox ? null : `url(#${filterId})`,
       backdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
     }
+    const warpClip = `inset(0 round ${cornerRadius}px)`
 
     return (
       <div ref={ref} className={`relative ${className} ${active ? "active" : ""} ${Boolean(onClick) ? "cursor-pointer" : ""}`} style={style} onClick={onClick}>
@@ -222,6 +223,11 @@ const GlassContainer = forwardRef<
                 ...backdropStyle,
                 position: "absolute",
                 inset: "0",
+                borderRadius: `${cornerRadius}px`,
+                overflow: "hidden",
+                clipPath: warpClip,
+                WebkitClipPath: warpClip,
+                WebkitBackdropFilter: backdropStyle.backdropFilter,
               } as CSSProperties
             }
           />
