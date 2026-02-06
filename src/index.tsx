@@ -148,6 +148,7 @@ const GlassContainer = forwardRef<
     padding?: string
     glassSize?: { width: number; height: number }
     onClick?: () => void
+    disableRefraction?: boolean
     mode?: "standard" | "polar" | "prominent" | "shader"
   }>
 >(
@@ -170,6 +171,7 @@ const GlassContainer = forwardRef<
       padding = "24px 32px",
       glassSize = { width: 270, height: 69 },
       onClick,
+      disableRefraction = false,
       mode = "standard",
     },
     ref,
@@ -188,7 +190,7 @@ const GlassContainer = forwardRef<
     }, [mode, glassSize.width, glassSize.height])
 
     const backdropStyle = {
-      filter: isFirefox ? null : `url(#${filterId})`,
+      filter: disableRefraction || isFirefox ? null : `url(#${filterId})`,
       backdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
     }
     const warpClip = `inset(0 round ${cornerRadius}px)`
@@ -270,6 +272,7 @@ interface LiquidGlassProps {
   overLight?: boolean
   mode?: "standard" | "polar" | "prominent" | "shader"
   onClick?: () => void
+  disableRefraction?: boolean
 }
 
 export default function LiquidGlass({
@@ -290,6 +293,7 @@ export default function LiquidGlass({
   style = {},
   mode = "standard",
   onClick,
+  disableRefraction = false,
 }: LiquidGlassProps) {
   const glassRef = useRef<HTMLDivElement>(null)
   const [isHovered, setIsHovered] = useState(false)
@@ -513,6 +517,7 @@ export default function LiquidGlass({
         active={isActive}
         overLight={overLight}
         onClick={onClick}
+        disableRefraction={disableRefraction}
         mode={mode}
       >
         {children}
