@@ -221,27 +221,12 @@ var GlassContainer = forwardRef(
       }
     }, [mode, glassSize.width, glassSize.height]);
     const backdropStyle = {
-      filter: disableRefraction || isFirefox ? void 0 : `url(#${filterId})`,
-      backdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
-      WebkitBackdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`
+      filter: disableRefraction || isFirefox ? null : `url(#${filterId})`,
+      backdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`
     };
-    const { transform: _stripTransform, ...styleWithoutTransform } = style || {};
-    return /* @__PURE__ */ jsxs("div", { ref, className: `relative ${className} ${active ? "active" : ""} ${Boolean(onClick) ? "cursor-pointer" : ""}`, style: { ...styleWithoutTransform, overflow: "hidden", borderRadius: `${cornerRadius}px` }, onClick, children: [
+    return /* @__PURE__ */ jsxs("div", { ref, className: `relative ${className} ${active ? "active" : ""} ${Boolean(onClick) ? "cursor-pointer" : ""}`, style, onClick, children: [
       /* @__PURE__ */ jsx(GlassFilter, { mode, id: filterId, displacementScale, aberrationIntensity, width: glassSize.width, height: glassSize.height, shaderMapUrl }),
-      /* @__PURE__ */ jsx(
-        "span",
-        {
-          className: "glass__warp",
-          style: {
-            ...backdropStyle,
-            position: "absolute",
-            inset: "0",
-            zIndex: 0,
-            borderRadius: `${cornerRadius}px`
-          }
-        }
-      ),
-      /* @__PURE__ */ jsx(
+      /* @__PURE__ */ jsxs(
         "div",
         {
           className: "glass",
@@ -254,26 +239,38 @@ var GlassContainer = forwardRef(
             padding,
             overflow: "hidden",
             transition: "all 0.2s ease-in-out",
-            boxShadow: overLight ? "0px 16px 70px rgba(0, 0, 0, 0.75)" : "0px 12px 40px rgba(0, 0, 0, 0.25)",
-            zIndex: 1
+            boxShadow: overLight ? "0px 16px 70px rgba(0, 0, 0, 0.75)" : "0px 12px 40px rgba(0, 0, 0, 0.25)"
           },
           onMouseEnter,
           onMouseLeave,
           onMouseDown,
           onMouseUp,
-          children: /* @__PURE__ */ jsx(
-            "div",
-            {
-              className: "transition-all duration-150 ease-in-out text-white",
-              style: {
-                position: "relative",
-                zIndex: 1,
-                font: "500 20px/1 system-ui",
-                textShadow: overLight ? "0px 2px 12px rgba(0, 0, 0, 0)" : "0px 2px 12px rgba(0, 0, 0, 0.4)"
-              },
-              children
-            }
-          )
+          children: [
+            /* @__PURE__ */ jsx(
+              "span",
+              {
+                className: "glass__warp",
+                style: {
+                  ...backdropStyle,
+                  position: "absolute",
+                  inset: "0"
+                }
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              "div",
+              {
+                className: "transition-all duration-150 ease-in-out text-white",
+                style: {
+                  position: "relative",
+                  zIndex: 1,
+                  font: "500 20px/1 system-ui",
+                  textShadow: overLight ? "0px 2px 12px rgba(0, 0, 0, 0)" : "0px 2px 12px rgba(0, 0, 0, 0.4)"
+                },
+                children
+              }
+            )
+          ]
         }
       )
     ] });

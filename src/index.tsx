@@ -190,32 +190,13 @@ const GlassContainer = forwardRef<
     }, [mode, glassSize.width, glassSize.height])
 
     const backdropStyle = {
-      filter: disableRefraction || isFirefox ? undefined : `url(#${filterId})`,
+      filter: disableRefraction || isFirefox ? null : `url(#${filterId})`,
       backdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
-      WebkitBackdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
     }
 
-    // Strip transform from style so the outermost div has NO transform
-    // (transform on an ancestor breaks backdrop-filter on descendants)
-    const { transform: _stripTransform, ...styleWithoutTransform } = style || {}
-
     return (
-      <div ref={ref} className={`relative ${className} ${active ? "active" : ""} ${Boolean(onClick) ? "cursor-pointer" : ""}`} style={{ ...styleWithoutTransform, overflow: "hidden", borderRadius: `${cornerRadius}px` }} onClick={onClick}>
+      <div ref={ref} className={`relative ${className} ${active ? "active" : ""} ${Boolean(onClick) ? "cursor-pointer" : ""}`} style={style} onClick={onClick}>
         <GlassFilter mode={mode} id={filterId} displacementScale={displacementScale} aberrationIntensity={aberrationIntensity} width={glassSize.width} height={glassSize.height} shaderMapUrl={shaderMapUrl} />
-
-        {/* backdrop layer - OUTSIDE .glass so no transform ancestor */}
-        <span
-          className="glass__warp"
-          style={
-            {
-              ...backdropStyle,
-              position: "absolute",
-              inset: "0",
-              zIndex: 0,
-              borderRadius: `${cornerRadius}px`,
-            } as CSSProperties
-          }
-        />
 
         <div
           className="glass"
@@ -229,13 +210,24 @@ const GlassContainer = forwardRef<
             overflow: "hidden",
             transition: "all 0.2s ease-in-out",
             boxShadow: overLight ? "0px 16px 70px rgba(0, 0, 0, 0.75)" : "0px 12px 40px rgba(0, 0, 0, 0.25)",
-            zIndex: 1,
           }}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}
         >
+          {/* backdrop layer that gets wiggly */}
+          <span
+            className="glass__warp"
+            style={
+              {
+                ...backdropStyle,
+                position: "absolute",
+                inset: "0",
+              } as CSSProperties
+            }
+          />
+
           {/* user content stays sharp */}
           <div
             className="transition-all duration-150 ease-in-out text-white"
