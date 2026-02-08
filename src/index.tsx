@@ -433,18 +433,48 @@ export default function LiquidGlass({
     }
   }, [globalMousePos, elasticity, calculateFadeInFactor])
 
-  // Update glass size whenever component mounts or window resizes
+  // Keep glass size in sync with layout changes (fonts/content/hydration), not just window resize.
   useEffect(() => {
+    const target = glassRef.current
+    if (!target) {
+      return
+    }
+
+    let frame = 0
+
     const updateGlassSize = () => {
-      if (glassRef.current) {
-        const rect = glassRef.current.getBoundingClientRect()
-        setGlassSize({ width: rect.width, height: rect.height })
+      const width = target.offsetWidth
+      const height = target.offsetHeight
+
+      if (width > 0 && height > 0) {
+        setGlassSize((prev) => {
+          if (prev.width === width && prev.height === height) {
+            return prev
+          }
+
+          return { width, height }
+        })
       }
     }
 
-    updateGlassSize()
-    window.addEventListener("resize", updateGlassSize)
-    return () => window.removeEventListener("resize", updateGlassSize)
+    const scheduleUpdate = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(updateGlassSize)
+    }
+
+    const resizeObserver = new ResizeObserver(scheduleUpdate)
+    resizeObserver.observe(target)
+
+    const syncTimer = window.setTimeout(scheduleUpdate, 160)
+    scheduleUpdate()
+    window.addEventListener("resize", scheduleUpdate)
+
+    return () => {
+      cancelAnimationFrame(frame)
+      window.clearTimeout(syncTimer)
+      resizeObserver.disconnect()
+      window.removeEventListener("resize", scheduleUpdate)
+    }
   }, [])
 
   const elasticTranslation = calculateElasticTranslation()
