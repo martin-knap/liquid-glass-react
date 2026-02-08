@@ -189,13 +189,11 @@ const GlassContainer = forwardRef<
       }
     }, [mode, glassSize.width, glassSize.height])
 
-    const backdropStyle = {
-      filter: disableRefraction || isFirefox ? null : `url(#${filterId})`,
-      backdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
-    }
+    const blurValue = `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`
+    const warpFilter = disableRefraction || isFirefox ? null : `url(#${filterId})`
 
     return (
-      <div ref={ref} className={`relative ${className} ${active ? "active" : ""} ${Boolean(onClick) ? "cursor-pointer" : ""}`} style={style} onClick={onClick}>
+      <div ref={ref} className={`relative ${className} ${active ? "active" : ""} ${Boolean(onClick) ? "cursor-pointer" : ""}`} style={{ ...style, backdropFilter: blurValue, WebkitBackdropFilter: blurValue, overflow: "hidden", borderRadius: `${cornerRadius}px` }} onClick={onClick}>
         <GlassFilter mode={mode} id={filterId} displacementScale={displacementScale} aberrationIntensity={aberrationIntensity} width={glassSize.width} height={glassSize.height} shaderMapUrl={shaderMapUrl} />
 
         <div
@@ -221,7 +219,7 @@ const GlassContainer = forwardRef<
             className="glass__warp"
             style={
               {
-                ...backdropStyle,
+                filter: warpFilter,
                 position: "absolute",
                 inset: "0",
               } as CSSProperties
